@@ -6,9 +6,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/pquerna/ffjson/ffjson"
+	"github.com/sirupsen/logrus"
 )
 
 var (
