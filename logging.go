@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sync"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/pquerna/ffjson/ffjson"
@@ -13,6 +14,7 @@ import (
 
 var (
 	log = logrus.New()
+	mu  sync.Mutex
 )
 
 func init() {
@@ -27,14 +29,21 @@ func init() {
 }
 
 func Output() io.Writer {
+	mu.Lock()
+	defer mu.Unlock()
 	return log.Out
 }
 
 func SetOutput(w io.Writer) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Out = w
 }
 
 func SetDebug(enabled bool) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	if enabled {
 		log.SetLevel(logrus.DebugLevel)
 	} else {
@@ -43,22 +52,32 @@ func SetDebug(enabled bool) {
 }
 
 func LogScriptError(name string, msg interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Errorf("script error [%s]: %v", name, msg)
 }
 
 func LogScriptWarn(name string, msg interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Warnf("script warn [%s]: %v", name, msg)
 }
 
 func Printf(format string, a ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	fmt.Fprintf(log.Out, format, a...)
 }
 
 func Println(a ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	fmt.Fprintln(log.Out, a...)
 }
 
 func Print(a ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	fmt.Fprint(log.Out, a...)
 }
 
@@ -110,105 +129,147 @@ func Dump(descr string, in interface{}) {
 
 // Debug logs a message at level Debug on the standard logger.
 func Debug(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Debug(args...)
 }
 
 // Info logs a message at level Info on the standard logger.
 func Info(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Info(args...)
 }
 
 // Warn logs a message at level Warn on the standard logger.
 func Warn(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Warn(args...)
 }
 
 // Warning logs a message at level Warn on the standard logger.
 func Warning(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Warning(args...)
 }
 
 // Error logs a message at level Error on the standard logger.
 func Error(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Error(args...)
 }
 
 // Panic logs a message at level Panic on the standard logger.
 func Panic(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Panic(args...)
 }
 
 // Fatal logs a message at level Fatal on the standard logger.
 func Fatal(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Fatal(args...)
 }
 
 // Debugf logs a message at level Debug on the standard logger.
 func Debugf(format string, args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Debugf(format, args...)
 }
 
 // Infof logs a message at level Info on the standard logger.
 func Infof(format string, args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Infof(format, args...)
 }
 
 // Warnf logs a message at level Warn on the standard logger.
 func Warnf(format string, args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Warnf(format, args...)
 }
 
 // Warningf logs a message at level Warn on the standard logger.
 func Warningf(format string, args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Warningf(format, args...)
 }
 
 // Errorf logs a message at level Error on the standard logger.
 func Errorf(format string, args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Errorf(format, args...)
 }
 
 // Panicf logs a message at level Panic on the standard logger.
 func Panicf(format string, args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Panicf(format, args...)
 }
 
 // Fatalf logs a message at level Fatal on the standard logger.
 func Fatalf(format string, args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Fatalf(format, args...)
 }
 
 // Debugln logs a message at level Debug on the standard logger.
 func Debugln(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Debugln(args...)
 }
 
 // Infoln logs a message at level Info on the standard logger.
 func Infoln(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Infoln(args...)
 }
 
 // Warnln logs a message at level Warn on the standard logger.
 func Warnln(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Warnln(args...)
 }
 
 // Warningln logs a message at level Warn on the standard logger.
 func Warningln(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Warningln(args...)
 }
 
 // Errorln logs a message at level Error on the standard logger.
 func Errorln(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Errorln(args...)
 }
 
 // Panicln logs a message at level Panic on the standard logger.
 func Panicln(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Panicln(args...)
 }
 
 // Fatalln logs a message at level Fatal on the standard logger.
 func Fatalln(args ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
 	log.Fatalln(args...)
 }
