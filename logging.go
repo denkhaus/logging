@@ -82,6 +82,9 @@ func Print(a ...interface{}) {
 }
 
 func DDumpUnmarshaled(descr string, in []byte) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	if log.Level < logrus.DebugLevel {
 		return
 	}
@@ -91,40 +94,63 @@ func DDumpUnmarshaled(descr string, in []byte) {
 		panic("DumpUnmarshaled: unable to unmarshal input")
 	}
 
-	DDump(descr, res)
+	fmt.Fprintf(log.Out, "%s ------------------------- dump start ---------------------------------------\n", descr)
+	spew.Fdump(log.Out, res)
+	fmt.Fprintf(log.Out, "%s -------------------------  dump end  ---------------------------------------\n\n", descr)
 }
 
 func DDumpJSON(descr string, in interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	if log.Level < logrus.DebugLevel {
 		return
 	}
 
-	DumpJSON(descr, in)
-}
-
-func DumpJSON(descr string, in interface{}) {
 	out, err := json.MarshalIndent(in, "", "  ")
 	if err != nil {
 		panic("DumpJSON: unable to marshal input")
 	}
 
-	Printf("%s ------------------------- dump start ---------------------------------------\n", descr)
-	Println(string(out))
-	Printf("%s -------------------------  dump end  ---------------------------------------\n\n", descr)
+	fmt.Fprintf(log.Out, "%s ------------------------- dump start ---------------------------------------\n", descr)
+	fmt.Fprintln(log.Out, string(out))
+	fmt.Fprintf(log.Out, "%s -------------------------  dump end  ---------------------------------------\n\n", descr)
+}
+
+func DumpJSON(descr string, in interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	out, err := json.MarshalIndent(in, "", "  ")
+	if err != nil {
+		panic("DumpJSON: unable to marshal input")
+	}
+
+	fmt.Fprintf(log.Out, "%s ------------------------- dump start ---------------------------------------\n", descr)
+	fmt.Fprintln(log.Out, string(out))
+	fmt.Fprintf(log.Out, "%s -------------------------  dump end  ---------------------------------------\n\n", descr)
 }
 
 func DDump(descr string, in interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	if log.Level < logrus.DebugLevel {
 		return
 	}
 
-	Dump(descr, in)
+	fmt.Fprintf(log.Out, "%s ------------------------- dump start ---------------------------------------\n", descr)
+	spew.Fdump(log.Out, in)
+	fmt.Fprintf(log.Out, "%s -------------------------  dump end  ---------------------------------------\n\n", descr)
 }
 
 func Dump(descr string, in interface{}) {
-	Printf("%s ------------------------- dump start ---------------------------------------\n", descr)
+	mu.Lock()
+	defer mu.Unlock()
+
+	fmt.Fprintf(log.Out, "%s ------------------------- dump start ---------------------------------------\n", descr)
 	spew.Fdump(log.Out, in)
-	Printf("%s -------------------------  dump end  ---------------------------------------\n\n", descr)
+	fmt.Fprintf(log.Out, "%s -------------------------  dump end  ---------------------------------------\n\n", descr)
 }
 
 // Debug logs a message at level Debug on the standard logger.
