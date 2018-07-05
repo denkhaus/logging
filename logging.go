@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"sync"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/pquerna/ffjson/ffjson"
+	"github.com/sasha-s/go-deadlock"
 	"github.com/sirupsen/logrus"
 )
 
 var (
 	log = logrus.New()
-	mu  sync.Mutex
+	mu  deadlock.Mutex
 )
 
 func init() {
