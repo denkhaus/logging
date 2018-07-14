@@ -17,6 +17,15 @@ var (
 	mu  deadlock.Mutex
 )
 
+type LogType int
+
+const (
+	LogTypeStandard LogType = iota
+	LogTypeSimple
+	LogTypeColored
+	LogTypeJSON
+)
+
 func init() {
 	fmt := &logrus.TextFormatter{
 		ForceColors:      true,
@@ -48,6 +57,57 @@ func SetDebug(enabled bool) {
 		log.SetLevel(logrus.DebugLevel)
 	} else {
 		log.SetLevel(logrus.InfoLevel)
+	}
+}
+
+func SetLogTypeFromString(typ string) {
+	switch typ {
+	case "standard":
+		SetLogType(LogTypeStandard)
+		break
+	case "simple":
+		SetLogType(LogTypeSimple)
+		break
+	case "colored":
+		SetLogType(LogTypeColored)
+		break
+	case "json":
+		SetLogType(LogTypeJSON)
+		break
+	default:
+		Warn("unknown log type - set colored")
+		SetLogType(LogTypeColored)
+	}
+}
+
+func SetLogType(typ LogType) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	switch typ {
+	case LogTypeStandard:
+		log.Formatter = new(logrus.TextFormatter)
+		break
+
+	case LogTypeSimple:
+		log.Formatter = &logrus.TextFormatter{
+			DisableColors:    true,
+			DisableSorting:   true,
+			DisableTimestamp: true,
+		}
+		break
+
+	case LogTypeColored:
+		log.Formatter = &logrus.TextFormatter{
+			ForceColors:      true,
+			DisableSorting:   true,
+			DisableTimestamp: true,
+		}
+		break
+
+	case LogTypeJSON:
+		log.Formatter = new(logrus.JSONFormatter)
+		break
 	}
 }
 
